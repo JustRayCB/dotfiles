@@ -126,7 +126,6 @@ Plug 'patstockwell/vim-monokai-tasty'
 
 "Vim spector
 Plug 'puremourning/vimspector'
-
 "Autopairs
 "Plug 'jiangmiao/auto-pairs'
 
@@ -140,7 +139,6 @@ Plug 'lervag/vimtex'
 "Plug 'honza/vim-snippets'
 " Set mapleader to space
 
-Plug 'metakirby5/codi.vim'
 
 call plug#end()
 let mapleader = " "
@@ -186,8 +184,11 @@ if has("autocmd")
 endif
 
 "Execute Python code
-autocmd FileType python map <buffer> <F2> :w<CR>:exec '!python3.10' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F2> <esc>:w<CR>:exec '!python3.10' shellescape(@%, 1)<CR>
+autocmd FileType python map <buffer> <F2> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <F2> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+"Execute Python code with a doctest
+autocmd FileType python map <buffer> <F4> :w<CR>:!clear<CR>:exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>:! rm -R __pycache__<CR>
+autocmd FileType python imap <buffer> <F4> <esc>:w<CR>:!clear<CR>:exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>
 "autocmd FileType python map <buffer> <F2> :w !python3 %<CR>
 "autocmd FileType python imap <buffer> <F2> :w !python3 %<CR>
 
