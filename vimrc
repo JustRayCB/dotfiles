@@ -5,6 +5,9 @@ map s <Nop>
 " Syntax highlighting
 syntax on
 
+
+"CODI is the plugin that update the line of code according to the cod
+
 "Autoindent
 "autocmd FileType cpp, py setlocal noexpandtab tabstop=4 sw=4 sts=4
 filetype off
@@ -24,7 +27,8 @@ let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --no-ignore-vcs'
 " Set options viewable by using :set all
 " Or help for individual configs can be accessed :help <name>
 set nocompatible
-set redrawtime=10000
+set redrawtime=20000
+
 set background=dark
 set laststatus=2
 set noerrorbells
@@ -42,7 +46,7 @@ set incsearch
 set cursorline
 "set noswapfile to disable swap files
 
-"One more space to be behind the last char in the line
+"One more space behind the last char in the line
 set virtualedit+=onemore
 
 "To use mouse in VIM
@@ -85,10 +89,12 @@ call plug#begin('~/.vim/plugged')
 
 "Colorscheme
 "set background=dark
+"
+Plug 'metakirby5/codi.vim'
 
-
+Plug 'tpope/vim-fugitive'
 " Make your Vim/Neovim as smart as VSCode
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim'
 
 " Formatter
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
@@ -184,21 +190,25 @@ if has("autocmd")
 endif
 
 "Execute Python code
-autocmd FileType python map <buffer> <F2> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-autocmd FileType python imap <buffer> <F2> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+"DISPLAY PROBLEM WHEN SAVING AND EXECUTING FILE
+autocmd FileType python map <buffer> <F2> :w <CR>: exec '!python3' shellescape(@%, 1) <CR>
+autocmd FileType python imap <buffer> <F2> <esc> :w <CR> :exec '!python3' shellescape(@%, 1)<CR>
 "Execute Python code with a doctest
-autocmd FileType python map <buffer> <F4> :w<CR>:!clear<CR>:exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>:! rm -R __pycache__<CR>
-autocmd FileType python imap <buffer> <F4> <esc>:w<CR>:!clear<CR>:exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>
-"autocmd FileType python map <buffer> <F2> :w !python3 %<CR>
+"And delete the pycache folder
+autocmd FileType python map <buffer> <F4> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>:! rm -R __pycache__<CR>
+autocmd FileType python imap <buffer> <F4> <esc> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>
+"autocmd FileType python map <buffer> <F2> :w !python %<CR>
 "autocmd FileType python imap <buffer> <F2> :w !python3 %<CR>
 
-"Open a vertical panes with the python console
-nmap <leader><leader>y :w <CR>:vertical botright term ipython <CR>
+"Open a vertical panes with the python console and resize it
+nmap <leader><leader>y :w <CR>:vertical  botright term ipython <CR> <C-w>:vertical resize 65 <CR> %clear<CR>
 tnoremap <Left> <Nop>
 tnoremap <Right> <Nop>
 tnoremap <Up> <Nop>
 tnoremap <down> <nop>
 
+
+autocmd FileType markdown :call CocDisable()
 
 "Execute C++ code
 autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ % -o %< && ./%< <CR>
@@ -249,6 +259,9 @@ nmap <leader>>do :VimspectorShowOutput
 "terminal mode
 tnoremap <ESC> <C-w>:q!<CR>
 tnoremap jj <C-w>N 
+"exit the terminal in insert mode
+tnoremap :q <C-w>:q!<CR>
+
 
 
 "map ctrl-c as yank
@@ -266,6 +279,11 @@ noremap <silent> <C-Right> :vertical resize -3<CR>
 noremap <silent> <C-Up> :resize +3<CR>
 noremap <silent> <C-Down> :resize -3<CR>
 
+"Adjust split terminal panes size more friendly
+tnoremap <silent> <C-Left> :vertical resize +3<CR>
+tnoremap <silent> <C-Right> :vertical resize -3<CR>
+tnoremap <silent> <C-Up> :resize +3<CR>
+tnoremap <silent> <C-Down> :resize -3<CR>
 "Open terminal inside vim
 "map <leader>tm :vs|:terminal<CR>
 
@@ -317,37 +335,40 @@ set shortmess+=c
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
 if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
+" Recently vim can merge signcolumn and number column into one
+set signcolumn=number
 else
-  set signcolumn=yes
+set signcolumn=yes
 endif
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
+" UPDATE AFTER 0.082 I THINK THIS IS USEFULL
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"-----
 
 function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion.
 if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent><expr> <c-space> coc#refresh()
 else
-  inoremap <silent><expr> <c-@> coc#refresh()
+inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
+" UPDATE AFTER 0.082 I THINK THIS IS USEFULL
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+                          \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -364,7 +385,7 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
+if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   elseif (coc#rpc#ready())
     call CocActionAsync('doHover')
@@ -372,7 +393,19 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
-
+"custom pop up menu 0.082 coc nvim
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <C-x><C-z> coc#pum#visible() ? coc#pum#stop() : "\<C-x>\<C-z>"
+" remap for complete to use tab and <cr>
+inoremap <silent><expr> <TAB>
+        \ coc#pum#visible() ? coc#pum#next(1):
+        \ <SID>check_back_space() ? "\<Tab>" :
+        \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <c-space> coc#refresh()
+"end of default settings coc nvim pop up menu
+hi CocSearch ctermfg=12 guifg=#18A3FF
+hi CocMenuSel ctermbg=109 guibg=#13354A
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
@@ -440,6 +473,17 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+let g:lightline = {
+      \ 'colorscheme': 'deus',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead'
+      \ },
+      \ }
 
 " Mappings for CoCList
 " Show all diagnostics.
