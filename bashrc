@@ -116,5 +116,27 @@ if ! shopt -oq posix; then
   fi
 fi
 eval "$(starship init bash)"
-export DISPLAY=172.21.64.1:0
 
+alias python=python3
+alias act="source .venv/bin/activate"
+alias dis="deactivate"
+alias mvenv="python3 -m venv .venv"
+
+# Codi
+# Usage: codi [filetype] [filename]
+codi() {
+  local syntax="${1:-python}"
+  shift
+  vim -c \
+    "let g:startify_disable_at_vimenter = 1 |\
+    set bt=nofile ls=0 noru nonu nornu |\
+    hi ColorColumn ctermbg=NONE |\
+    hi VertSplit ctermbg=NONE |\
+    hi NonText ctermfg=0 |\
+    Codi $syntax" "$@"
+}
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export LIBGL_ALWAYS_INDIRECT=1 #GWSL
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0 #GWSL
+export PULSE_SERVER=tcp:$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}') #GWSL
