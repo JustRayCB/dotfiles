@@ -113,5 +113,32 @@ symbol = "🌟 "
 version_format = "v${raw}"
 detect_extensions = ["java", "class", "gradle", "jar", "cljs", "cljc", "jav"]
 
+
 [c]
-format = "via [$name $version]($style)"
+#format = "via [$name $version]($style)"
+symbol = "© "
+style = "bg:#86BBD8"
+format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
+detect_extensions = ["c", "h", "cpp", "hpp"]
+commands = [ [ "cc", "--version" ], [ "gcc", "--version" ], [ "clang", "--version" ] ]
+
+
+[golang]
+symbol = "🐹 "
+style = "bg:#86BBD8"
+format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
+
+[haskell]
+symbol = "λ "
+style = "bg:#86BBD8"
+format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
+
+[julia]
+symbol = "ஃ "
+style = "bg:#86BBD8"
+format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
+
+[rust]
+symbol = "🦀"
+style = "bg:#86BBD8"
+format = '[[ $symbol ($version) ](bg:#86BBD8)]($style)'
