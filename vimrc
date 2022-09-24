@@ -5,7 +5,7 @@ map s <Nop>
 " Syntax highlighting
 syntax on
 
-
+packadd! termdebug
 "CODI is the plugin that update the line of code according to the cod
 
 "Autoindent
@@ -20,8 +20,17 @@ set shiftwidth=4
 " On pressing tab, insert 4 spaces
 set expandtab
 
-" Set FZF Default to Ripgrep (must install ripgrep)
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --no-ignore-vcs'
+"set spell
+set spelllang+=fr
+
+"Windows setup for termdebug
+let g:termdebug_wide=1
+
+
+
+" Set FZF Default to Ripgrep (must install ripgrep) --> this command just made
+" my fzf not working
+"let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --no-ignore-vcs'
 
 " Options viewable by using :options
 " Set options viewable by using :set all
@@ -72,7 +81,8 @@ if executable(s:clip)
 endif
 
 "Sumatra setup 
-let g:vimtex_view_general_viewer = "/mnt/c/Users/Craya/Desktop/SumatraPDF.exe"
+"let g:vimtex_view_general_viewer = "/mnt/c/Users/Craya/Desktop/SumatraPDF.exe"
+let g:vimtex_view_general_viewer = "/mnt/c/Users/Craya/AppData/Local/SumatraPDF/SumatraPDF.exe"
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat = 'pdf'
 let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode $*'
@@ -143,12 +153,11 @@ Plug 'lervag/vimtex'
 
 "" Snippets are separated from the engine. Add this if you want them:
 "Plug 'honza/vim-snippets'
-" Set mapleader to space
-
 
 call plug#end()
-let mapleader = " "
 
+" Set mapleader to space
+let mapleader = " "
 
 "Autopairs
 inoremap { {}<ESC>ha
@@ -195,8 +204,8 @@ autocmd FileType python map <buffer> <F2> :w <CR>: exec '!python3' shellescape(@
 autocmd FileType python imap <buffer> <F2> <esc> :w <CR> :exec '!python3' shellescape(@%, 1)<CR>
 "Execute Python code with a doctest
 "And delete the pycache folder
-autocmd FileType python map <buffer> <F4> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>:! rm -R __pycache__<CR>
-autocmd FileType python imap <buffer> <F4> <esc> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>
+autocmd FileType python map <buffer> <F3> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>:! rm -R __pycache__<CR>
+autocmd FileType python imap <buffer> <F3> <esc> :exec '!python3 -m doctest -v' shellescape(@%, 1)<CR>
 "autocmd FileType python map <buffer> <F2> :w !python %<CR>
 "autocmd FileType python imap <buffer> <F2> :w !python3 %<CR>
 
@@ -211,8 +220,9 @@ tnoremap <down> <nop>
 autocmd FileType markdown :call CocDisable()
 
 "Execute C++ code
-autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ % -o %< && ./%< <CR>
-
+autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< && ./%< <CR>
+"autocmd FileType cpp map <buffer> <F4> :w <CR> :!g++ -std=c++2a % -o %< `fltk-config --ldflags` && ./%< <CR>
+autocmd FileType cpp map <buffer> <F3> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< -lfltk  && ./%< <CR>
 autocmd FileType java map <buffer> <F2> :w <CR> :!javac % && java %< <CR>
 
 " Maps
@@ -237,6 +247,14 @@ vnoremap <leader><leader>c :call nerdcommenter#Comment(0,"toggle")<CR>
 nnoremap <leader><Tab> :bnext<CR>
 nnoremap <leader><Tab><Tab> :bprevious<CR>
 
+"Vimspector window layout settings 
+let g:vimspector_sidebar_width = 35
+"Uncomment next line if you want the output console under script section
+"let g:vimspector_bottombar_height = 5
+"If you want to reduce the script section
+let g:vimspector_code_minwidth = 70
+
+
 "auto save mode between buf and :update put silent! if u don't want any message
 noremap <C-F5> :au! CursorHoldI,CursorHold,BufLeave <buffer> :update<CR>
 
@@ -251,10 +269,16 @@ nnoremap <leader>d_ :call vimspector#Restart()<CR>
 nnoremap <leader>co :call vimspector#Continue()<CR>
 nnoremap <leader>drc :call vimspector#RunToCursor()<CR>
 nnoremap <leader>bp :call vimspector#ToggleBreakpoint()<CR>
-nnoremap <leader>df :call vimspector#ToggleConditionalBreakpoint()<CR> 
+nnoremap <leader>df :call vimspector#ToggleConditionalBreakpoint()<CR>
+nnoremap <leader>nb :call vimspector#JumpToNextBreakpoint()<CR>
 nmap <leader>de :VimspectorEval
 nmap <leader>dw :VimspectorWatch
 nmap <leader>>do :VimspectorShowOutput
+
+" for normal mode - the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" for visual mode, the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval
 
 "terminal mode
 tnoremap <ESC> <C-w>:q!<CR>
@@ -409,7 +433,10 @@ hi CocMenuSel ctermbg=109 guibg=#13354A
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" Symbol renaming.
+let g:prettier#config#single_quote = 'true'
+let g:prettier#config#trailing_comma = 'all'
+
+"Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
