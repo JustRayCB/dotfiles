@@ -1,0 +1,91 @@
+{
+    "configurations": {
+        "Python - Launch": {
+            "adapter": "debugpy",
+            "configuration": {
+                "name": "Python: Launch current file",
+                "type": "python",
+                "request": "launch",
+                "stopOnEntry": true,
+                "stopAtEntry": true,
+                "console": "externalTerminal",
+                "debugOptions": [],
+                "cwd": "${cwd}",
+                "program": "${file}",
+                "args": [
+                    "*${CommandLineArgs}"
+                ]
+            }
+        },
+        "Perl - Launch": {
+            "adapter": "vscode-perl-debug",
+            "configuration": {
+                "name": "Perl: Launch current file",
+                "type": "perl",
+                "request": "launch",
+                "exec": "/usr/bin/env perl",
+                "execArgs": [],
+                "stopOnEntry": true,
+                "stopAtEntry": true,
+                "console": "externalTerminal",
+                "sessions": "single",
+                "debugOptions": [],
+                "cwd": "${cwd}",
+                "program": "${file}"
+            }
+        },
+        "CodeLLDB": {
+            "adapter": "CodeLLDB",
+            "variables": {
+                "BUILDME": {
+                    "shell": "g++ -o ${fileDirname}/${fileBasenameNoExtension} -g -std=c++2a ${fileDirname}/${fileBasename}"
+                }
+            },
+            "configuration": {
+                "request": "launch",
+                "program": "${fileDirname}/${fileBasenameNoExtension}",
+                "args": [
+                    "*${CommandLineArgs}"
+                ],
+                "console": "externalTerminal"
+            }
+        },
+        "C - Launch": {
+            "adapter": "vscode-cpptools",
+            "configuration": {
+                "name": "Cpp: Launch current file",
+                "type": "cppdbg",
+                "request": "launch",
+                "externalConsole": true,
+                "logging": {
+                    "engineLogging": true
+                },
+                "stopOnEntry": true,
+                "stopAtEntry": true,
+                "debugOptions": [],
+                "MIMode": "gdb",
+                "cwd": "${cwd}",
+                "program": "${fileDirname}/${fileBasenameNoExtension}"
+            }
+        },
+        "Java - Launch": {
+            "adapter": "vscode-java-debug",
+            "configuration": {
+                "name": "Java: Launch current file",
+                "request": "launch",
+                "mainClass": "com.vimspector.test.TestApplication",
+                "sourcePaths": [
+                    "${workspaceRoot}/src/main/java"
+                ],
+                "classPaths": [
+                    "${workspaceRoot}/target/classes"
+                ],
+                "args": [
+                    "*${CommandLineArgs}"
+                ],
+                "stopOnEntry": true,
+                "console": "integratedTerminal"
+            }
+        }
+    }
+}
