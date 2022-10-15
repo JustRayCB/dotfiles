@@ -1,31 +1,29 @@
 "Map escape to jj
 "imap -> Insert mode , map -> Normal mode
-imap jj <Esc>
+"Map jj to escape and `^ is to not move the cursor to the left
+imap jj <Esc>`^
 map s <Nop>
 " Syntax highlighting
-syntax on
+syntax enable
 
 packadd! termdebug
 "CODI is the plugin that update the line of code according to the cod
 
 "Autoindent
 "autocmd FileType cpp, py setlocal noexpandtab tabstop=4 sw=4 sts=4
-filetype off
-filetype plugin indent on
+"filetype off
+"filetype plugin indent on
 "filetype indent on 
 " show existing tab with 4 spaces width
-set tabstop=4
+"set tabstop=4
 " when indenting with '>', use 4 spaces width
-set shiftwidth=4
+"set shiftwidth=4
 " On pressing tab, insert 4 spaces
-set expandtab
-
+"set expandtab
 "set spell
 set spelllang+=fr
-
 "Windows setup for termdebug
 let g:termdebug_wide=1
-
 
 
 " Set FZF Default to Ripgrep (must install ripgrep) --> this command just made
@@ -38,13 +36,19 @@ let g:termdebug_wide=1
 set nocompatible
 set redrawtime=20000
 
+" Time out on key codes but not mappings.
+" Basically this makes terminal Vim work sanely.
+"set notimeout
+"set ttimeout
+"set ttimeoutlen=5
+
 set background=dark
 set laststatus=2
 set noerrorbells
 "set tabstop=2 softtabstop=2
 "set shiftwidth=2
 set expandtab
-set smartindent
+"set smartindent
 set nu
 set nowrap
 set nobackup
@@ -68,8 +72,7 @@ set colorcolumn=100
 set splitbelow splitright
 
 " Column color set to grey
-highlight ColorColumn ctermbg=1
-
+"highlight ColorColumn ctermbg=1
 "Make that when I press y to yank the text is in the windows clipboard
 " WSL yank support
 let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
@@ -92,6 +95,7 @@ autocmd VimEnter *.tex VimtexCompile
 
 "Compile Latex
 autocmd FileType tex nmap <buffer> <C-T> \ll<CR>
+set expandtab ts=4 sw=4 ai
 
 
 " Plugins
@@ -107,7 +111,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim'
 
 " Formatter
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+"Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " Comment and uncomment lines
 Plug 'preservim/nerdcommenter'
@@ -140,6 +144,9 @@ Plug 'morhetz/gruvbox'
 " Vim-monokai-tasty color theme
 Plug 'patstockwell/vim-monokai-tasty'
 
+"Vim nighfly colorscheme
+Plug 'bluz71/vim-nightfly-guicolors'
+
 "Vim spector
 Plug 'puremourning/vimspector'
 "Autopairs
@@ -163,9 +170,13 @@ let mapleader = " "
 inoremap { {}<ESC>ha
 inoremap [ []<ESC>ha
 inoremap $ $$<ESC>ha
+"inoremap ( ()<ESC>ha
 
 "Select  a word
 map <leader><leader><leader> ciw
+
+"Close a current tab
+nmap <S-tab> :tabclose<CR>
 
 "Go to the first line
 map <leader><leader>s :1<cr>
@@ -178,10 +189,12 @@ map <leader><leader>a A
 "Go to start line
 map <leader><leader>i I
 
+"Open a new tab 
+nmap <tab><tab> :tabnew<CR>
+
 "Add the nasm extension when creating/opening a .asm file
 autocmd VimEnter *.asm set ft=nasm
 autocmd BufNew,BufRead *.asm set ft=nasm
-
 
 "Skeleton of a file in asm when entering in a .asm file
 if has("autocmd")
@@ -220,10 +233,11 @@ tnoremap <down> <nop>
 autocmd FileType markdown :call CocDisable()
 
 "Execute C++ code
-autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< && ./%< <CR>
-"autocmd FileType cpp map <buffer> <F4> :w <CR> :!g++ -std=c++2a % -o %< `fltk-config --ldflags` && ./%< <CR>
-autocmd FileType cpp map <buffer> <F3> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< -lfltk  && ./%< <CR>
-autocmd FileType java map <buffer> <F2> :w <CR> :!javac % && java %< <CR>
+autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ -std=c++20 -Wall -Wextra -pedantic % -o %< && ./%<<CR>
+autocmd FileType cpp map <buffer> <F4> :w <CR> :!g++ -std=c++20 -Wall -Wextra -pedantic % -o %< `fltk-config --ldflags` && ./%<<CR>
+"autocmd FileType cpp map <buffer> <F3> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< -lfltk  && ./%< <CR>
+autocmd FileType cpp map <buffer> <F3> :w <CR> :!make && ./main<CR>
+autocmd FileType java map <buffer> <F2> :w <CR> :!javac % && java %<<CR>
 
 " Maps
 nmap <leader>hk :vsplit ~/.vim/hotkeys<cr>
@@ -232,7 +246,13 @@ nmap <leader>gd <Plug>(coc-definition)
 nmap <leader>gr <Plug>(coc-references)
 nmap <leader>t :NERDTree<cr>
 nmap <leader><leader>p :Prettier<cr>
+"Set NERDTree windows size 
 :let g:NERDTreeWinSize=17
+"Open NERDTree when opening vim
+"autocmd VimEnter (*cpp,*py,*h,*hpp)  NERDTree | wincmd p
+autocmd VimEnter *.c,*.h,*.cpp,*hpp,*.py,*.txt  NERDTree | wincmd p
+"Close NERDTree when quit vim 
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nmap <leader><leader>g :GoFmt<cr>
 nmap <leader><leader>b :Black<cr>
 nmap <leader><leader>u :UndotreeToggle<cr>
@@ -340,8 +360,8 @@ set encoding=utf-8
 set hidden
 
 " Some servers have issues with backup files, see #649.
-set nobackup
-set nowritebackup
+"set nobackup
+"set nowritebackup
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -433,8 +453,8 @@ hi CocMenuSel ctermbg=109 guibg=#13354A
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-let g:prettier#config#single_quote = 'true'
-let g:prettier#config#trailing_comma = 'all'
+"let g:prettier#config#single_quote = 'true'
+"let g:prettier#config#trailing_comma = 'all'
 
 "Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -533,10 +553,90 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 """"""""""""""""""""""""coc nvim settings end""""""""""""""""""""""""
 
 " Set the prettier CLI executable path
-let g:prettier#exec_cmd_path = "~/.vim/plugged/vim-prettier/node_modules/prettier"
+"let g:prettier#exec_cmd_path = "~/.vim/plugged/vim-prettier/node_modules/prettier"
 " Max line length that prettier will wrap on: a number or 'auto'
-let g:prettier#config#print_width = 100 " default is 'auto'
-
+"let g:prettier#config#print_width = 100 " default is 'auto'
+"----------------------------------COLORSCHEME-----------------------------------------------
+set background=dark
+set termguicolors
+augroup nightfly_override
+    autocmd!
+    " I like green statements
+    autocmd ColorScheme nightfly hi Statement guifg=#5FD75F ctermfg=green
+    " I like transparent background for terminals
+    autocmd ColorScheme nightfly hi Normal ctermbg=NONE
+    " I like italic comments
+    autocmd ColorScheme nightfly hi Comment cterm=italic guifg=#76b5ef
+    autocmd Colorscheme nightfly hi ColorColumn guibg=Red
+    autocmd Colorscheme nightfly hi Variable  guifg=Blue
+    "autocmd Colorscheme nightfly hi ErrorMsg  guibg=Red
+    " etc ...
+augroup END
 " Colorscheme (For gruvbox $TERM env var needs to be xterm-256color)
 "autocmd vimenter * ++nested colorscheme default
 "colorscheme vim-monokai-tasty
+colorscheme nightfly
+let g:nightflyCursorColor = v:true
+let g:nightflyNormalFloat = v:true
+let g:nightflyWinSeparator = 2
+"--------------------------------------------------------------------------------------------
+
+" Returns true if the color hex value is light
+"augroup project
+  "autocmd!
+  "autocmd BufRead,BufNewFile *.h,*.c set filetype=c.doxygen
+"augroup END
+"Set .h file for c language 
+let g:c_syntax_for_h = 1
+
+"Save cursor last edit position
+"source $VIMRUNTIME/vimrc_example.vim
+"" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+"Disable highlighting when searching 
+set nohlsearch
+
+set tabstop=4
+syntax on " Syntax highlighting
+set showmatch " Shows matching brackets
+set ruler " Always shows location in file (line#)
+set smarttab " Autotabs for certain code
+set shiftwidth=4
+filetype plugin indent on
+let g:coc_snippet_next = '<Tab>'
+nnoremap sh :w <CR>:!chmod +x % && source %<CR>
+"Make indent right
+map <F7> gg=G<C-o><C-o>
+autocmd FileType python setl tabstop=4|setl shiftwidth=4|setl softtabstop=4
+autocmd FileType cpp setl tabstop=4|setl shiftwidth=4|setl softtabstop=4
+autocmd FileType html setl tabstop=2|setl shiftwidth=2|setl softtabstop=2
+autocmd FileType javascript setl tabstop=2|setl shiftwidth=2|setl softtabstop=2
+autocmd FileType css setl tabstop=2|setl shiftwidth=2|setl softtabstop=2
+autocmd Filetype ruby setlocal tabstop=2|setl shiftwidth=2|setl softtabstop=2
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" Backups {{{
+
+set backup                        " enable backups
+"set noswapfile                    " it's 2013, Vim.
+
+set undodir=~/.vim/tmp/undo//     " undo files
+set backupdir=~/.vim/tmp/backup// " backups
+set directory=~/.vim/tmp/swap//   " swap files
+
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
+
+" }}}
