@@ -50,6 +50,24 @@
                 "console": "externalTerminal"
             }
         },
+        "CodeLLDB-MAKE": {
+            "adapter": "CodeLLDB",
+            "variables": {
+                "BUILDME": {
+                    "shell": "make"
+                }
+            },
+            "configuration": {
+                "request": "launch",
+                "program": "main",
+                "args": [
+                    "*${CommandLineArgs}"
+                ],
+                "console": "externalTerminal",
+                "externalConsole": true,
+                "stopAtEntry": true
+            }
+        },
         "C - Launch": {
             "adapter": "vscode-cpptools",
             "configuration": {
