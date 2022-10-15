@@ -121,6 +121,8 @@ alias python=python3
 alias act="source .venv/bin/activate"
 alias dis="deactivate"
 alias mvenv="python3 -m venv .venv"
+cdl() { cd "$@" && ls; }
+cl() { clear && ls; }
 
 # Codi
 # Usage: codi [filetype] [filename]
@@ -142,3 +144,5 @@ export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}
 export PULSE_SERVER=tcp:$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}') #GWSL
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+. "$HOME/.cargo/env"
