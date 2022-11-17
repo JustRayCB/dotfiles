@@ -1,9 +1,10 @@
 {
 	"_comment": "La ligne suivante est pour désactiver les annotations de type en Python",
+	"python.linting.pylintPath": "/home/cbr/.local/bin/pylint",
 	"pyright.inlayHints.variableTypes": false,
 	"pyright.completion.importSupport": true,
 	"pyright.completion.snippetSupport": true,
-	"clangd.path": "~/.config/coc/extensions/coc-clangd-data/install/14.0.3/clangd_14.0.3/bin/clangd",
+	"clangd.path": "~/.config/coc/extensions/coc-clangd-data/install/15.0.3/clangd_15.0.3/bin/clangd",
 	"suggest.noselect": false,
 	"coc.preferences.formatOnSaveFiletypes": [
 		"javascript",
@@ -14,6 +15,7 @@
 		"typescript.tsx",
 		"graphql"
 	],
+	"colors.filetypes": ["*"],
 	"prettier.requireConfig": false,
 	"prettier.formatterPriority": 1,
 	"prettier.useTabs": true,
