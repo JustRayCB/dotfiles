@@ -87,6 +87,39 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
+# find out which distribution we are running on
+LFILE="/etc/*-release"
+MFILE="/System/Library/CoreServices/SystemVersion.plist"
+_distro=$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')
+
+# set an icon based on the distro
+# make sure your font is compatible with https://github.com/lukas-w/font-logos
+case $_distro in
+    *kali*)                  ICON="ﴣ";;
+    *arch*)                  ICON="";;
+    *debian*)                ICON="";;
+    *raspbian*)              ICON="";;
+    *ubuntu*)                ICON="";;
+    *elementary*)            ICON="";;
+    *fedora*)                ICON="";;
+    *coreos*)                ICON="";;
+    *gentoo*)                ICON="";;
+    *mageia*)                ICON="";;
+    *centos*)                ICON="";;
+    *opensuse*|*tumbleweed*) ICON="";;
+    *sabayon*)               ICON="";;
+    *slackware*)             ICON="";;
+    *linuxmint*)             ICON="";;
+    *alpine*)                ICON="";;
+    *aosc*)                  ICON="";;
+    *nixos*)                 ICON="";;
+    *devuan*)                ICON="";;
+    *manjaro*)               ICON="";;
+    *rhel*)                  ICON="";;
+    *macos*)                 ICON="";;
+    *)                       ICON="";;
+esac
+
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
@@ -115,6 +148,9 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+export STARSHIP_DISTRO="$ICON "
+export STARSHIP_CONFIG=~/.config/starship.toml
 eval "$(starship init bash)"
 
 alias python=python3
@@ -146,3 +182,5 @@ export PULSE_SERVER=tcp:$(cat /etc/resolv.conf | grep nameserver | awk '{print $
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 . "$HOME/.cargo/env"
+
+export PATH="/home/cbr/.local/lib/python3.9/site-packages:$PATH"
