@@ -88,7 +88,7 @@ endif
 let g:vimtex_view_general_viewer = "/mnt/c/Users/Craya/AppData/Local/SumatraPDF/SumatraPDF.exe"
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat = 'pdf'
-let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode $*'
+let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode -shell-escape $*'
 "let g:Tex_ViewRule_pdf='sumatraPDF'
 "let g:vimtex_view_method = "sumatraPDF"
 autocmd VimEnter *.tex VimtexCompile
@@ -161,6 +161,12 @@ Plug 'lervag/vimtex'
 "" Snippets are separated from the engine. Add this if you want them:
 "Plug 'honza/vim-snippets'
 
+if has('nvim') || has('patch-8.0.902')
+  Plug 'mhinz/vim-signify'
+else
+  Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
+endif
+
 call plug#end()
 
 " Set mapleader to space
@@ -191,6 +197,9 @@ map <leader><leader>i I
 
 "Open a new tab 
 nmap <tab><tab> :tabnew<CR>
+
+"Go to one word right
+nmap m w
 
 "Add the nasm extension when creating/opening a .asm file
 autocmd VimEnter *.asm set ft=nasm
@@ -235,7 +244,7 @@ autocmd FileType markdown :call CocDisable()
 "Execute C++ code
 autocmd FileType cpp map <buffer> <F2> :w <CR> :!g++ -std=c++20 -Wall -Wextra -pedantic % -o %< && ./%<<CR>
 autocmd FileType cpp map <buffer> <F4> :w <CR> :!g++ -std=c++20 -Wall -Wextra -pedantic % -o %< `fltk-config --ldflags` && ./%<<CR>
-"autocmd FileType cpp map <buffer> <F3> :w <CR> :!g++ -std=c++2a -Wall -Wextra -pedantic % -o %< -lfltk  && ./%< <CR>
+"autocmd FileType cpp map <buffer> <F4> :w <CR> :!g++ -std=c++20 -Wall -Wextra -pedantic % -o %< -lfltk  && ./%< <CR>
 autocmd FileType cpp map <buffer> <F3> :w <CR> :!make && ./main<CR>
 autocmd FileType java map <buffer> <F2> :w <CR> :!javac % && java %<<CR>
 
@@ -368,6 +377,7 @@ set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
+"set updatetime=300
 set updatetime=300
 
 "autocmd FileType markdown let b:coc_suggest_disable = 1
@@ -640,3 +650,22 @@ if !isdirectory(expand(&directory))
 endif
 
 " }}}
+
+"{{{
+"Binary support
+" for hex editing
+augroup Binary
+  au!
+  au BufReadPre  *.bin let &bin=1
+  au BufReadPost *.bin if &bin | %!xxd
+  au BufReadPost *.bin set ft=xxd | endif
+  au BufWritePre *.bin if &bin | %!xxd -r
+  au BufWritePre *.bin endif
+  au BufWritePost *.bin if &bin | %!xxd
+  au BufWritePost *.bin set nomod | endif
+augroup END
+"}}}
+nmap B i<C-k>b*
+"set foldmethod=indent "Can replace indent by syntax
+"set foldlevel=1 "According to indent level
+"set foldclose=all   "automatically close when naviage out of fold
